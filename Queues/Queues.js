@@ -1,38 +1,27 @@
-class Stack{
+class Queue{
     constructor(){
         this.items=[];
     }
-    /* Push */
-    push(element){
+
+    enqueue(element){
         this.items.push(element);
     }
-    /* Pop */
-    pop(){
+    dequeue(){
         if(this.items.length==0){
             throw new Error("Underflow");
         }
-        return this.items.pop();
+        return this.items.shift();
     }
-    /* Peek */
-    peek(){
-        return this.items[0];
-    }
-
-    /* Check if stack empty */
-
     isEmpty(){
-        return this.items.length==0;
+        return this.items==0;
     }
-    /* Print */
-    print(){
+    printQueue(){
         let conc="";
         this.items.map(item=>{
             conc+=item+" ";
         })
         console.log(conc);
     }
-
 }
 
-
-module.exports=Stack;
+module.exports=Queue;
