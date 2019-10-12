@@ -1,83 +1,109 @@
-class Node {
-    constructor(data) {
-        this.data = data;
-        this.left = null;
-        this.right = null;
-    }
-}
-
-class BinaryTree {
+class Queue {
     constructor() {
-        this.root = null;
-    }
-    addNode(data) {
-        let newNode = new Node(data);
-        if (this.root == null) {
-            this.root = newNode;
-        }
-        else {
-            this.insertNode(this.root, newNode);
-        }
+        this.items = [];
     }
 
-    insertNode(node, newNode) {
-        if (node.data < newNode.data) {
-            if (node.left == null) {
-                node.left = newNode;
-            }
-            else {
-                this.insertNode(node.left, newNode);
-            }
-        }
-        else {
-            if (node.right == null) {
-                node.right = newNode;
-            }
-            else {
-                this.insertNode(node.right, newNode);
-            }
-        }
+    enqueue(data) {
+        this.items.push(data);
     }
-    remove(data) {
-        this.root = this.removeNode(this.root, data);
+    dequeue() {
+        return this.items.shift();
+    }
+    isEmpty() {
+        return this.items.length == 0;
+    }
+}
+
+
+class Graph {
+    constructor(noofvertices) {
+        this.noofvertices = noofvertices;
+        this.AdjList = new Map();
     }
 
-    removeNode(node, data) {
-        if (node == null) {
-            return null;
-        }
-        else if (data < node.data) {
-            node.left = this.removeNode(node.left, data);
-            return node;
-        }
-        else if (data > node.data) {
-            node.right = this.removeNode(node.right, data);
-            return node;
-        }
+    addVertex(vertex) {
+        this.AdjList.set(vertex, []);
+    }
 
-        /* If the data is similar to the node's data */
-        else {
-            /* Delete the node with no children */
-            if (node.left == null && node.right == null) {
-                node = null;
-                return node;
-            }
+    addEdge(v, w) {
+        this.AdjList.get(v).push(w);
+        this.AdjList.get(w).push(v);
+    }
 
-            /* Deleting a node with one children */
-            if (node.left == null) {
-                node = node.right;
-                return node;
+    printGraph() {
+        let get_keys = this.AdjList.keys();
+        for (let i of get_keys) {
+            let values = this.AdjList.get(i);
+            let conc = "";
+            for (let j of values) {
+                conc += j + " "
             }
-            else if (node.right == null) {
-                node = node.left;
-                return node;
-            }
+            console.log(i + " => " + conc);
+        }
+    }
 
-            /* Deleting a node with two chilren */
-            var aux = this.findMinNode(node.right);
-            node.data = aux.data;
-            node.right = this.removeNode(node.right, aux.data);
-            return node;
+    bfs(startingNode) {
+        let visited = [];
+        let total="";
+        for (let i = 0; i < this.noofvertices; i++) {
+            visited[i] = false;
+        }
+        visited[startingNode] = true;
+        let q = new Queue();
+        q.enqueue(startingNode);
+        while (!q.isEmpty()) {
+            let getQueueElement = q.dequeue();
+            // console.log(getQueueElement);
+            total+=getQueueElement+" ";
+            let get_neigs = this.AdjList.get(getQueueElement);
+            for (let i in get_neigs) {
+                let neigh = get_neigs[i];
+                if (!visited[neigh]) {
+                    visited[neigh] = true;
+                    q.enqueue(neigh);
+                }
+            }
+        }
+        console.log(total);
+    }
+
+    dfs(startingNode) {
+        let visited = [];
+        for (let i = 0; i < this.noofvertices; i++) {
+            visited[i] = false;
+        }
+        this.DFSUtil(startingNode, visited);
+    }
+    DFSUtil(vertex, visited) {
+        visited[vertex] = true;
+        console.log(vertex);
+        let get_neigs = this.AdjList.get(vertex);
+        for (let i in get_neigs) {
+            let get_element = get_neigs[i];
+            if (!visited[get_element]) {
+                this.DFSUtil(get_element, visited);
+            }
         }
     }
 }
+
+
+let g = new Graph(6);
+let nodes = ['A', 'B', 'C', 'D', 'E', 'F'];
+nodes.map(item => {
+    g.addVertex(item);
+})
+
+
+g.addEdge('A', 'C')
+g.addEdge('A', 'B')
+g.addEdge('A', 'D')
+g.addEdge('B', 'C')
+g.addEdge('B', 'E')
+g.addEdge('C', 'E')
+g.addEdge('E', 'F')
+g.addEdge('F', 'D')
+
+
+g.dfs('A');
+
